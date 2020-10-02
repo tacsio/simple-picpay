@@ -1,49 +1,49 @@
 package io.tacsio.model;
 
+import com.google.common.base.Preconditions;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import org.hibernate.annotations.CreationTimestamp;
+
+import javax.persistence.*;
+import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.Positive;
-
-import org.hibernate.annotations.CreationTimestamp;
-
-import io.smallrye.common.constraint.Assert;
-
 @Entity
 @Table(name = "picpay_transaction")
-public class Transaction {
+public class Transaction extends PanacheEntityBase {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private UUID id;
+    @Id
+    private UUID id;
 
-	@ManyToOne
-	private final User payer;
+    @PrePersist
+    void generateId() {
+        this.id = UUID.randomUUID();
+    }
 
-	@ManyToOne
-	private final User payee;
+    @ManyToOne
+    private User payer;
 
-	@Positive
-	private final BigDecimal value;
+    @ManyToOne
+    private User payee;
 
-	@CreationTimestamp
-	private final LocalDateTime timestamp;
+    @Positive
+    private BigDecimal value;
 
-	public Transaction(User payer, User payee, @Positive BigDecimal value) {
-		Assert.assertTrue(payer.canPay());
-		Assert.assertTrue(value.compareTo(BigDecimal.ZERO) > 0);
+    @CreationTimestamp
+    private LocalDateTime timestamp;
 
-		this.payer = payer;
-		this.payee = payee;
-		this.value = value;
-		this.timestamp = LocalDateTime.now();
-	}
+    Transaction() {
+    }
 
+    public Transaction(User payer, User payee, @Positive BigDecimal value) {
+        Preconditions.checkArgument(payer.canPay(), "This user can not pay, only receive payments.");
+        Preconditions.checkArgument(value.compareTo(BigDecimal.ZERO) > 0, "Payment value must be greater than 0.");
+
+        this.payer = payer;
+        this.payee = payee;
+        this.value = value;
+        this.timestamp = LocalDateTime.now();
+    }
 }
