@@ -4,6 +4,9 @@ import com.google.common.base.Preconditions;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
+import javax.validation.constraints.Positive;
+
 import java.math.BigDecimal;
 
 @Entity
@@ -27,30 +30,35 @@ public class Wallet extends PanacheEntityBase {
         this.owner = owner;
     }
 
-    public void decrement(BigDecimal value) {
-        //don't accepts a value greater than balance
-        Preconditions.checkArgument(balance.compareTo(value) > 0, "The wallet doesn't have sufficient money to complete this transaction.");
+    @Transactional
+    public void withdraw(BigDecimal value) {
+        // don't accepts a value greater than balance
+        Preconditions.checkArgument(balance.compareTo(value) > -1, "Insufficient money to complete this transaction.");
 
         this.balance = balance.subtract(value);
         this.persist();
     }
 
-    public void increment(BigDecimal value) {
-        //don't accepts negative values
+    @Transactional
+    public void deposit(BigDecimal value) {
+        // don't accepts negative values
         Preconditions.checkArgument(value.compareTo(BigDecimal.ZERO) > 0, "You can only increment positive values.");
 
         this.balance = balance.add(value);
         this.persist();
     }
 
-    public Transaction transfer(BigDecimal value, Wallet payee) {
+    @Transactional
+    public Transaction transfer(@Positive BigDecimal value, Wallet payeeWallet) {
         Preconditions.checkArgument(this.owner.canPay(), "This user can not pay, only receive payments.");
         Preconditions.checkArgument(value.compareTo(BigDecimal.ZERO) > 0, "Payment value must be greater than 0.");
 
-        this.decrement(value);
-        payee.increment(value);
+        this.withdraw(value);
+        payeeWallet.deposit(value);
 
-        Transaction transaction = new Transaction(this.owner, payee.owner, value);
+        Transaction transaction = new Transaction(this.owner, payeeWallet.owner, value);
+        transaction.confirm();
+
         return transaction;
     }
 }

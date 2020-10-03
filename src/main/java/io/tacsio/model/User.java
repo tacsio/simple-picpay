@@ -1,18 +1,28 @@
 package io.tacsio.model;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import static io.tacsio.model.UserType.DEFAULT;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.br.CNPJ;
 import org.hibernate.validator.constraints.br.CPF;
 
-import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-import static io.tacsio.model.UserType.DEFAULT;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 @Entity
 @Table(name = "picpay_user")
@@ -69,6 +79,7 @@ public class User extends PanacheEntityBase {
     }
 
     public Transaction pay(BigDecimal value, User payee) {
-        return this.wallet.transfer(value, payee.wallet);
+        Wallet payeeWallet = payee.wallet;
+        return this.wallet.transfer(value, payeeWallet);
     }
 }
