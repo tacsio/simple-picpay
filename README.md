@@ -5,8 +5,6 @@
 Existem duas implementações distintas desde desafio, uma utiliza ideias de [_Fluent Interfaces_](https://github.com/tacsio/simple-picpay/tree/main) e outra o padrão de
 [_Service Layer_](https://github.com/tacsio/simple-picpay/tree/service-pattern) que é bastante comum.  
 
-### Implementação Service Pattern
-
 ### Implementação Fluent Interfaces
 O Quarkus permite a utilização do padrão _Active Record_ através da biblioteca Panache. Desta forma decidi criar uma 
 implementação focando na simplicidade e clareza do código, onde a leitura das regras de negócio não passam por indireções
@@ -26,7 +24,25 @@ carteiras dos usuários).
 #### Desvantagens
 1. Aspectos de infraestratura no objeto do modelo (Método transacional no modelo)
 2. Aumento da complexidade na construção de testes unitários sobre os métodos de negócio do modelo (não será apenas a 
-   instanciação do objeto e utilização dos métodos de negócio, será necessário resolver as dependências de infra);
+   instanciação do objeto e utilização dos métodos de negócio, será necessário resolver as dependências de infra)
+
+
+### Implementação Service Pattern
+Implementação utilizando uma camada de serviço. 
+
+Nesta versão, para realizar um pagamento basta utilizar a seguinte construção:
+```java
+Transaction transaction = paymentService.makePayment(form);
+```
+Adicionei o formulário e criei 2 novas interfaces para garantir que não sejam feitos pagamentos com entidades 'trocadas' (o pagador receber por engano).
+A transação neste ponto já está completada e confirmada. Assim como na outra implementação, a notificação é enviada reativamente (utilizando CompletableFutures do Java).
+
+### Vantagens
+1. A primeira vista tem a vantagem da 'visibilidade' da transação estar concentrada na camada de serviço. Mesmo que seja possível, porém atualmente não necessário, propagar a transação
+2. Facilita o teste de algumas regras de negócio isoladamente, por exemplo, a carteira e usuários (esse ponto é discutível já que se a transação fosse isolada em outro ponto, na versão fluent, teria o mesmo comportamento)
+
+### Desvantagens
+1. Possívelmente, dependendo da evolução nas regras, a classe de serviço pode demandar muitas mudanças, já que concentra o fluxo de transferências.
 
 
 ## Objetivo - PicPay Simplificado

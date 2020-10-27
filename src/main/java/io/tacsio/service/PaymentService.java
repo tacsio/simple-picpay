@@ -1,6 +1,8 @@
 package io.tacsio.service;
 
 import com.google.common.base.Preconditions;
+
+import io.tacsio.api.dto.PaymentForm;
 import io.tacsio.model.Payee;
 import io.tacsio.model.Payer;
 import io.tacsio.model.Transaction;
@@ -13,9 +15,11 @@ import java.math.BigDecimal;
 public class PaymentService {
 
     @Transactional
-    public Transaction makePayment(Payer payer, Payee payee, BigDecimal value) {
-        // don't accepts negative values
-        Preconditions.checkArgument(value.compareTo(BigDecimal.ZERO) > 0, "You can only pay positive values.");
+    public Transaction makePayment(PaymentForm paymentForm) {
+        Payer payer = paymentForm.getPayer();
+        Payee payee = paymentForm.getPayee();
+        BigDecimal value = paymentForm.getValue();
+        
         //only users can make payments
         Preconditions.checkArgument(payer.canPay(), "This user can not pay, only receive payments.");
 

@@ -1,5 +1,7 @@
 package io.tacsio.api.dto;
 
+import io.tacsio.model.Payee;
+import io.tacsio.model.Payer;
 import io.tacsio.model.User;
 
 import javax.validation.constraints.NotNull;
@@ -21,11 +23,11 @@ public class PaymentForm {
         return value;
     }
 
-    public User getPayer() {
+    public Payer getPayer() {
         return User.findById(this.payer);
     }
 
-    public User getPayee() {
+    public Payee getPayee() {
         return User.findById(this.payee);
     }
 }

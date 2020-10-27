@@ -2,7 +2,6 @@ package io.tacsio.model;
 
 import static io.tacsio.model.UserType.DEFAULT;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import javax.persistence.*;
@@ -70,7 +69,6 @@ public class User extends PanacheEntityBase implements Payer, Payee {
         return DEFAULT.equals(this.type);
     }
 
-    @Override
     public Wallet getWallet() {
         return wallet;
     }

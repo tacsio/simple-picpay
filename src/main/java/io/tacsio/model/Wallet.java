@@ -4,8 +4,6 @@ import com.google.common.base.Preconditions;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
-import javax.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 
@@ -31,6 +29,8 @@ public class Wallet extends PanacheEntityBase {
     }
 
     public void withdraw(BigDecimal value) {
+        // doesn't accepts negative values
+        Preconditions.checkArgument(value.compareTo(BigDecimal.ZERO) > 0, "You can only withdraw positive values.");
         // don't accepts a value greater than balance
         Preconditions.checkArgument(balance.compareTo(value) > -1, "Insufficient money to complete this transaction.");
 
@@ -38,7 +38,7 @@ public class Wallet extends PanacheEntityBase {
     }
 
     public void deposit(BigDecimal value) {
-        // don't accepts negative values
+        // doesn't accepts negative values
         Preconditions.checkArgument(value.compareTo(BigDecimal.ZERO) > 0, "You can only increment positive values.");
 
         this.balance = balance.add(value);
