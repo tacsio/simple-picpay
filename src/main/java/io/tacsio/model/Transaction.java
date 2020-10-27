@@ -52,7 +52,7 @@ public class Transaction extends PanacheEntityBase {
     @Column(updatable = false)
     private LocalDateTime timestamp;
 
-    Transaction() {
+    protected Transaction() {
     }
 
     public Transaction(User payer, User payee, @Positive BigDecimal value) {

@@ -20,7 +20,7 @@ public class PaymentController {
 
     @POST
     @Transactional
-    public Response fluentPayment(@Valid PaymentForm form) {
+    public Response payment(@Valid PaymentForm form) {
         User payer = form.getPayer();
         User payee = form.getPayee();
         BigDecimal value = form.getValue();

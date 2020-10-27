@@ -22,7 +22,7 @@ public class Wallet extends PanacheEntityBase {
     @OneToOne
     private User owner;
 
-    Wallet() {
+    protected Wallet() {
     }
 
     public Wallet(BigDecimal balance, User owner) {

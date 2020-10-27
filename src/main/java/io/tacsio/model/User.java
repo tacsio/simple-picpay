@@ -5,15 +5,7 @@ import static io.tacsio.model.UserType.DEFAULT;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
@@ -50,7 +42,7 @@ public class User extends PanacheEntityBase {
     @Enumerated(EnumType.STRING)
     private UserType type;
 
-    @OneToOne(mappedBy = "owner")
+    @OneToOne(mappedBy = "owner", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Wallet wallet;
 
     @CreationTimestamp
@@ -59,7 +51,7 @@ public class User extends PanacheEntityBase {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    User() {
+    protected User() {
     }
 
     public User(UserType type, @Email String email, String document, @NotEmpty String encryptedPassword) {
