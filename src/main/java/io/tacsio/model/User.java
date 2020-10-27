@@ -5,15 +5,7 @@ import static io.tacsio.model.UserType.DEFAULT;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
@@ -26,7 +18,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 @Entity
 @Table(name = "picpay_user")
-public class User extends PanacheEntityBase {
+public class User extends PanacheEntityBase implements Payer, Payee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +42,7 @@ public class User extends PanacheEntityBase {
     @Enumerated(EnumType.STRING)
     private UserType type;
 
-    @OneToOne(mappedBy = "owner")
+    @OneToOne(mappedBy = "owner", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Wallet wallet;
 
     @CreationTimestamp
@@ -59,7 +51,7 @@ public class User extends PanacheEntityBase {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    User() {
+    protected User() {
     }
 
     public User(UserType type, @Email String email, String document, @NotEmpty String encryptedPassword) {
@@ -78,8 +70,8 @@ public class User extends PanacheEntityBase {
         return DEFAULT.equals(this.type);
     }
 
-    public Transaction pay(BigDecimal value, User payee) {
-        Wallet payeeWallet = payee.wallet;
-        return this.wallet.transfer(value, payeeWallet);
+    @Override
+    public Wallet getWallet() {
+        return wallet;
     }
 }

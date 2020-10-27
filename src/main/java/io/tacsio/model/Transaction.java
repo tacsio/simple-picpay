@@ -55,12 +55,12 @@ public class Transaction extends PanacheEntityBase {
     Transaction() {
     }
 
-    public Transaction(User payer, User payee, @Positive BigDecimal value) {
+    public Transaction(Payer payer, Payee payee, @Positive BigDecimal value) {
         Preconditions.checkArgument(payer.canPay(), "This user can not pay, only receive payments.");
         Preconditions.checkArgument(value.compareTo(BigDecimal.ZERO) > 0, "Payment value must be greater than 0.");
 
-        this.payer = payer;
-        this.payee = payee;
+        this.payer = (User) payer;
+        this.payee = (User) payee;
         this.value = value;
         this.timestamp = LocalDateTime.now();
     }
@@ -78,6 +78,8 @@ public class Transaction extends PanacheEntityBase {
             throw new NotAuthorizedException("Transaction not authorized.", "auth-service");
         }
 
+        this.payer.persist();
+        this.payee.persist();
         this.persist();
 
         CompletableFuture.runAsync(() -> {
