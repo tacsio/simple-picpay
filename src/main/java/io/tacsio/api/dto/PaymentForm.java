@@ -4,6 +4,7 @@ import io.tacsio.model.User;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+
 import java.math.BigDecimal;
 
 public class PaymentForm {
@@ -17,15 +18,11 @@ public class PaymentForm {
     public PaymentForm() {
     }
 
-    public BigDecimal getValue() {
-        return value;
-    }
-
-    public User getPayer() {
+    public User toPayer() {
         return User.findById(this.payer);
     }
 
-    public User getPayee() {
+    public User toPayee() {
         return User.findById(this.payee);
     }
 }

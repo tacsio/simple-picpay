@@ -74,4 +74,9 @@ public class User extends PanacheEntityBase {
         Wallet payeeWallet = payee.wallet;
         return this.wallet.transfer(value, payeeWallet);
     }
+
+    public Long getId() {
+        return id;
+    }
+    
 }

@@ -21,9 +21,9 @@ public class PaymentController {
     @POST
     @Transactional
     public Response payment(@Valid PaymentForm form) {
-        User payer = form.getPayer();
-        User payee = form.getPayee();
-        BigDecimal value = form.getValue();
+        User payer = form.toPayer();
+        User payee = form.toPayee();
+        BigDecimal value = form.value;
 
         Transaction transaction = payer.pay(value, payee);
 
