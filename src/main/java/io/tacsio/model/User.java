@@ -72,4 +72,8 @@ public class User extends PanacheEntityBase implements Payer, Payee {
     public Wallet getWallet() {
         return wallet;
     }
+
+	public long getId() {
+		return this.id;
+	}
 }

@@ -16,8 +16,8 @@ public class PaymentService {
 
     @Transactional
     public Transaction makePayment(PaymentForm paymentForm) {
-        Payer payer = paymentForm.getPayer();
-        Payee payee = paymentForm.getPayee();
+        Payer payer = paymentForm.toPayer();
+        Payee payee = paymentForm.toPayee();
         BigDecimal value = paymentForm.getValue();
         
         //only users can make payments

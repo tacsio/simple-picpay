@@ -23,11 +23,11 @@ public class PaymentForm {
         return value;
     }
 
-    public Payer getPayer() {
+    public Payer toPayer() {
         return User.findById(this.payer);
     }
 
-    public Payee getPayee() {
+    public Payee toPayee() {
         return User.findById(this.payee);
     }
 }
