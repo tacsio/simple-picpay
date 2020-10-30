@@ -8,7 +8,7 @@ import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 public class PaymentForm {
-    @Positive
+    @Positive(message = "Payment value must be greater than 0.")
     public BigDecimal value;
     @NotNull
     public Long payer;
